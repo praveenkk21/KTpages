@@ -1,3 +1,4 @@
+package KTPages;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class KTPages {
 		
 		
 		
-		for (int i=25;i<28;i++)
+		for (int i=0;i<22;i++)
 		{try {
 		driver.findElement(By.id("66")).click();
 		//takeSnapShot(driver,"Clinical");
