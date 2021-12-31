@@ -18,73 +18,72 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ReadExcelFile {
 
-    public void readExcel(String filePath,String fileName,String sheetName) throws IOException
-    {
+	public void readExcel(String filePath, String fileName, String sheetName) throws IOException {
 
-    //Create an object of File class to open xlsx file
+		// Create an object of File class to open xlsx file
 
-    File file =    new File(filePath+"/"+fileName);
-    System.out.println(file);
+		File file = new File(filePath + "/" + fileName);
+		System.out.println(file);
 
-    //Create an object of FileInputStream class to read excel file
+		// Create an object of FileInputStream class to read excel file
 
-    FileInputStream inputStream = new FileInputStream(file);
+		FileInputStream inputStream = new FileInputStream(file);
 
-    Workbook MyWorkbook = null;
+		Workbook MyWorkbook = null;
 
-    //Find the file extension by splitting file name in substring  and getting only extension name
+		// Find the file extension by splitting file name in substring and getting only
+		// extension name
 
-    String fileExtensionName = fileName.substring(fileName.indexOf("."));
+		String fileExtensionName = fileName.substring(fileName.indexOf("."));
 
-    //Check condition if the file is xlsx file
+		// Check condition if the file is xlsx file
 
-    if(fileExtensionName.equals(".xlsx")){
+		if (fileExtensionName.equals(".xlsx")) {
 
-    //If it is xlsx file then create object of XSSFWorkbook class
+			// If it is xlsx file then create object of XSSFWorkbook class
 
-    	MyWorkbook = new XSSFWorkbook(inputStream);
+			MyWorkbook = new XSSFWorkbook(inputStream);
 
-    }
+		}
 
-    //Check condition if the file is xls file
+		// Check condition if the file is xls file
 
-    else if(fileExtensionName.equals(".xls")){
+		else if (fileExtensionName.equals(".xls")) {
 
-        //If it is xls file then create object of HSSFWorkbook class
+			// If it is xls file then create object of HSSFWorkbook class
 
-    	MyWorkbook = new HSSFWorkbook(inputStream);
+			MyWorkbook = new HSSFWorkbook(inputStream);
 
-    }
+		}
 
-    //Read sheet inside the workbook by its name
+		// Read sheet inside the workbook by its name
 
-    Sheet MySheet = MyWorkbook.getSheet(sheetName);
+		Sheet MySheet = MyWorkbook.getSheet(sheetName);
 
-    //Find number of rows in excel file
+		// Find number of rows in excel file
 
-    int rowCount = MySheet.getLastRowNum()-MySheet.getFirstRowNum();
+		int rowCount = MySheet.getLastRowNum() - MySheet.getFirstRowNum();
 
-    //Create a loop over all the rows of excel file to read it
-    System.out.println(MySheet.getRow(1).getCell(1).getStringCellValue());
+		// Create a loop over all the rows of excel file to read it
+		System.out.println(MySheet.getRow(1).getCell(1).getStringCellValue());
 
-    for (int i = 0; i < rowCount+1; i++) {
+		for (int i = 0; i < rowCount + 1; i++) {
 
-        Row row = MySheet.getRow(i);
+			Row row = MySheet.getRow(i);
 
-        //Create a loop to print cell values in a row
+			// Create a loop to print cell values in a row
 
-        for (int j = 0; j < row.getLastCellNum(); j++) {
+			for (int j = 0; j < row.getLastCellNum(); j++) {
 
-            //Print Excel data in console
+				// Print Excel data in console
 
-            System.out.print(row.getCell(j).getStringCellValue()+"|| ");
+				System.out.print(row.getCell(j).getStringCellValue() + "|| ");
 
-        }
+			}
 
-        System.out.println();
-    } 
+			System.out.println();
+		}
 
-    }  
+	}
 
 }
-

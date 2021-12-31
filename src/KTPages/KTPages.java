@@ -1,26 +1,26 @@
 package KTPages;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import java.lang.Math;
 import org.apache.commons.io.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
-
-@SuppressWarnings("unused")
 public class KTPages {
 	static WebDriver driver;
 	static String username, password, Client, intakeClient, subformname, subformfrom;
 	static String subformlibraryid;
 
 	@Test
-	
+
 	public static void browser() throws Exception {
 		File file = new File("C:\\Users\\praveenkumar\\eclipse-workspace\\KTPages\\file.properties");
 		FileInputStream fi = new FileInputStream(file);
@@ -52,43 +52,66 @@ public class KTPages {
 		} else {
 			UserLogin.netUserLogin(driver, username, password);
 		}
-		
-		takeSnapShot(driver,"Dashboard");
-		
-		
-		
-		for (int i=0;i<22;i++)
-		{try {
+
+		takeSnapShot(driver, "Dashboard");
+
 		driver.findElement(By.id("66")).click();
-		//takeSnapShot(driver,"Clinical");
-		driver.findElement(By.xpath("//*[@id='td_11']/table/tbody/tr/td[1]")).click();
-		//takeSnapShot(driver,"report");
-		driver.findElement(By.xpath("//*[@id=\"td_sub"+i+"\"]")).click();
-		Thread.sleep(5000);
-		driver.findElement(By.xpath("//input[@value='Display']")).click();
-		String Pagename=driver.findElement(By.id("mastePage_Title")).getText();
-		Thread.sleep(5000);
-		System.out.println(Pagename +" page is working fine");
-		takeSnapShot(driver,"KT "+i+" "+Pagename);
-		}
+		takeSnapShot(driver, "Clinical");
+		driver.findElement(By.xpath("//*[contains(text(),'Reports') and @class='MenuItemNormalStyle_Training']"))
+				.click();
+		List<WebElement> ctNum = driver.findElements(
+				By.xpath("//*[@class='MenuItemNormalStyle_DefaultNewStyles' and contains(@id,'td_sub')]"));
+		int ctNum2 = ctNum.size();
+		System.out.println(ctNum.size());
+		String tempUrl = driver.getCurrentUrl();
+		String[] st = tempUrl.split("/UI/", 3);
+		String st1 = st[0];
+		String st2 = st1.concat("/UI/Common/HomeBlank.aspx");
+		System.out.println(st2);
+		driver.get(st2);
 		
-		catch(NoSuchElementException e){
-			System.out.println("page is failing");
-			System.out.println(i+" Exception error");
+
+		for (int i = 0; i < ctNum2; i++) {
+			try {
+				driver.findElement(By.id("66")).click();
+				driver.findElement(
+						By.xpath("//*[contains(text(),'Reports') and @class='MenuItemNormalStyle_Training']")).click();
+				jExcecutor(driver.findElement(By.xpath("//*[@id=\"td_sub" + i + "\"]")));
+				driver.findElement(By.xpath("//*[@id=\"td_sub" + i + "\"]")).click();
+				Thread.sleep(5000);
+				driver.findElement(By.xpath("//input[@value='Display']")).click();
+				String Pagename = driver.findElement(By.id("mastePage_Title")).getText();
+				Thread.sleep(5000);
+				System.out.println(Pagename + " page is working fine");
+				takeSnapShot(driver, "KT " + i + " " + Pagename);
+			}
+
+			catch (Exception e) {
+				System.out.println("page is failing");
+				System.out.println(i + " Exception error");
+				System.out.println(st2);
+				driver.get(st2);
+			}
+
 		}
-		
-		}
+		driver.close();
 	}
 	
-	public static void takeSnapShot(WebDriver webdriver, String Pagename) throws Exception{
-		//Convert web driver object to TakeScreenshot
-		TakesScreenshot scrShot =((TakesScreenshot)webdriver);
-		//Call getScreenshotAs method to create image file
-		File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
-		//Move image file to new destination
-		File DestFile=new File("C:\\Users\\praveenkumar\\Downloads\\MyAutomation\\selenium-server-3.141.59\\Screnshots\\"+ Pagename +" "+ Math.random()+".jpg");
-		//Copy file at destination
+	public static void jExcecutor(WebElement el) {
+		JavascriptExecutor je=(JavascriptExecutor) driver;
+		je.executeScript("arguments[0].scrollIntoView(true)", el);
+	}
+
+	public static void takeSnapShot(WebDriver webdriver, String Pagename) throws Exception {
+		// Convert web driver object to TakeScreenshot
+		TakesScreenshot scrShot = ((TakesScreenshot) webdriver);
+		// Call getScreenshotAs method to create image file
+		File SrcFile = scrShot.getScreenshotAs(OutputType.FILE);
+		// Move image file to new destination
+		File DestFile = new File(
+				"C:\\Users\\praveenkumar\\Downloads\\MyAutomation\\selenium-server-3.141.59\\Screnshots\\" + Pagename
+						+ " " + Math.random() + ".jpg");
+		// Copy file at destination
 		FileUtils.copyFile(SrcFile, DestFile);
-		}
+	}
 }
-		
