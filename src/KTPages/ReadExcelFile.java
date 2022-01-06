@@ -3,13 +3,11 @@ package KTPages;
 import java.io.File;
 
 import java.io.FileInputStream;
-
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import org.apache.poi.ss.usermodel.Row;
-
 import org.apache.poi.ss.usermodel.Sheet;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -18,72 +16,80 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ReadExcelFile {
 
-	public void readExcel(String filePath, String fileName, String sheetName) throws IOException {
+	public static Workbook MyWorkbook;
+	public static Sheet MySheet;
+	public static FileInputStream inputStream;
+	public static FileOutputStream outputStream;
 
-		// Create an object of File class to open xlsx file
-
+	public static Sheet readExcel(String filePath, String fileName, String sheetName) throws IOException {
 		File file = new File(filePath + "/" + fileName);
 		System.out.println(file);
-
-		// Create an object of FileInputStream class to read excel file
-
-		FileInputStream inputStream = new FileInputStream(file);
-
-		Workbook MyWorkbook = null;
-
-		// Find the file extension by splitting file name in substring and getting only
-		// extension name
-
+		inputStream = new FileInputStream(file);
+		// Workbook MyWorkbook = null;
 		String fileExtensionName = fileName.substring(fileName.indexOf("."));
 
-		// Check condition if the file is xlsx file
-
 		if (fileExtensionName.equals(".xlsx")) {
-
-			// If it is xlsx file then create object of XSSFWorkbook class
 
 			MyWorkbook = new XSSFWorkbook(inputStream);
 
 		}
 
-		// Check condition if the file is xls file
-
 		else if (fileExtensionName.equals(".xls")) {
-
-			// If it is xls file then create object of HSSFWorkbook class
 
 			MyWorkbook = new HSSFWorkbook(inputStream);
 
 		}
 
-		// Read sheet inside the workbook by its name
-
 		Sheet MySheet = MyWorkbook.getSheet(sheetName);
-
-		// Find number of rows in excel file
-
-		int rowCount = MySheet.getLastRowNum() - MySheet.getFirstRowNum();
-
-		// Create a loop over all the rows of excel file to read it
-		System.out.println(MySheet.getRow(1).getCell(1).getStringCellValue());
-
-		for (int i = 0; i < rowCount + 1; i++) {
-
-			Row row = MySheet.getRow(i);
-
-			// Create a loop to print cell values in a row
-
-			for (int j = 0; j < row.getLastCellNum(); j++) {
-
-				// Print Excel data in console
-
-				System.out.print(row.getCell(j).getStringCellValue() + "|| ");
-
-			}
-
-			System.out.println();
-		}
-
+//		int rowCount = MySheet.getLastRowNum() - MySheet.getFirstRowNum();
+//		System.out.println(MySheet.getRow(1).getCell(1).getStringCellValue());
+//		System.out.println("Total row count" + rowCount);
+//		inputStream.close();
+//		//MyWorkbook.close();
+		return MySheet;
 	}
 
+	public String cellValueString(int rowNum, int colNum, Sheet MySheet) {
+		return MySheet.getRow(rowNum).getCell(colNum).getStringCellValue();
+	}
+
+	public int cellValueInt(int rowNum, int colNum, Sheet MySheet) {
+		return (int) MySheet.getRow(rowNum).getCell(colNum).getNumericCellValue();
+	}
+
+	@SuppressWarnings("null")
+	public static void writeExcel(String filePath, String fileName, String sheetName, int rowNum, int colNum,
+			String Value) throws IOException {
+
+		try {
+			Sheet MySheet = readExcel(filePath, fileName, sheetName);
+			File file = new File(filePath + "/" + fileName);
+			outputStream = new FileOutputStream(file);
+
+			// Workbook MyWorkbook = null;
+			if (MySheet.getRow(rowNum) == null) {
+				MySheet.createRow(rowNum).createCell(colNum).setCellValue(Value);
+				// inputStream.close();
+				MyWorkbook.write(outputStream);
+				MyWorkbook.close();
+				outputStream.close();
+				// System.out.println("Excel written successfully..");
+			} else {
+				MySheet.getRow(rowNum).createCell(colNum).setCellValue(Value);
+				// inputStream.close();
+				MyWorkbook.write(outputStream);
+				MyWorkbook.close();
+				outputStream.close();
+				// System.out.println("Excel written successfully..");
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+//	public void writeCellValueString(int rowNum, int colNum, Sheet MySheet,String Value)
+//	{
+//		 MySheet.getRow(rowNum).getCell(colNum).setCellValue(Value);
+//		 
 }

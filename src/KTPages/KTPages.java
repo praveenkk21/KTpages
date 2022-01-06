@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import java.lang.Math;
 import org.apache.commons.io.*;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -17,23 +18,35 @@ import org.testng.annotations.Test;
 public class KTPages {
 	static WebDriver driver;
 	static String username, password, Client, intakeClient, subformname, subformfrom;
-	static String subformlibraryid;
+	static String subformlibraryid, filePath;
 
 	@Test
 
 	public static void browser() throws Exception {
-		File file = new File("C:\\Users\\praveenkumar\\eclipse-workspace\\KTPages\\file.properties");
-		FileInputStream fi = new FileInputStream(file);
-		Properties fi1 = new Properties();
-		fi1.load(fi);
-		String browsername = fi1.getProperty("Browser");
-		username = fi1.getProperty("username");
-		password = fi1.getProperty("password");
-		intakeClient = fi1.getProperty("intakeClient");
-		Client = fi1.getProperty("Client");
-		subformname = fi1.getProperty("subformname");
-		subformlibraryid = fi1.getProperty("subformlibraryid");
-		subformfrom = fi1.getProperty("subformfrom");
+
+		ReadExcelFile objExcelFile = new ReadExcelFile();
+		filePath = System.getProperty("user.dir");
+		System.out.println(filePath);
+		Sheet MySheet = ReadExcelFile.readExcel(filePath, "excelfortest.xlsx", "Data");
+
+		String browsername = objExcelFile.cellValueString(0, 1, MySheet);
+		String site = objExcelFile.cellValueString(1, 1, MySheet);
+		username = objExcelFile.cellValueString(2, 1, MySheet);
+		password = objExcelFile.cellValueString(3, 1, MySheet);
+
+		/*
+		 * //To Get Input from Property file, Please use below Commented code File file
+		 * = new
+		 * File("C:\\Users\\praveenkumar\\eclipse-workspace\\KTPages\\file.properties");
+		 * FileInputStream fi = new FileInputStream(file); Properties fi1 = new
+		 * Properties(); fi1.load(fi); String browsername = fi1.getProperty("Browser");
+		 * username = fi1.getProperty("username"); password =
+		 * fi1.getProperty("password"); intakeClient = fi1.getProperty("intakeClient");
+		 * Client = fi1.getProperty("Client"); subformname =
+		 * fi1.getProperty("subformname"); subformlibraryid =
+		 * fi1.getProperty("subformlibraryid"); subformfrom =
+		 * fi1.getProperty("subformfrom");
+		 */
 
 		if (browsername.equals("Chrome")) {
 			System.out.println(browsername);
@@ -45,9 +58,9 @@ public class KTPages {
 			driver = Driver.firefox();
 		}
 
-		if (fi1.getProperty("site").equals("working")) {
+		if (site.equals("working")) {
 			UserLogin.workingUserLogin(driver, username, password);
-		} else if (fi1.getProperty("site").equals("prod")) {
+		} else if (site.equals("prod")) {
 			UserLogin.prodUserLogin(driver, username, password);
 		} else {
 			UserLogin.netUserLogin(driver, username, password);
@@ -69,7 +82,8 @@ public class KTPages {
 		String st2 = st1.concat("/UI/Common/HomeBlank.aspx");
 		System.out.println(st2);
 		driver.get(st2);
-		
+
+		int k = 0;
 
 		for (int i = 0; i < ctNum2; i++) {
 			try {
@@ -81,13 +95,16 @@ public class KTPages {
 				Thread.sleep(5000);
 				driver.findElement(By.xpath("//input[@value='Display']")).click();
 				String Pagename = driver.findElement(By.id("mastePage_Title")).getText();
-				Thread.sleep(5000);
+				k++;
+				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "excelfortest.xlsx", "Output", k, 0, Pagename);
 				System.out.println(Pagename + " page is working fine");
+				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "excelfortest.xlsx", "Output", k, 1, "Pass");
 				takeSnapShot(driver, "KT " + i + " " + Pagename);
 			}
 
 			catch (Exception e) {
 				System.out.println("page is failing");
+				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "excelfortest.xlsx", "Output", k, 1, "Fail");
 				System.out.println(i + " Exception error");
 				System.out.println(st2);
 				driver.get(st2);
@@ -96,9 +113,9 @@ public class KTPages {
 		}
 		driver.close();
 	}
-	
+
 	public static void jExcecutor(WebElement el) {
-		JavascriptExecutor je=(JavascriptExecutor) driver;
+		JavascriptExecutor je = (JavascriptExecutor) driver;
 		je.executeScript("arguments[0].scrollIntoView(true)", el);
 	}
 
