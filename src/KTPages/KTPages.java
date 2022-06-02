@@ -107,7 +107,7 @@ public class KTPages {
 
 		int k = 0;
 
-		for (int i = 0; i < ctNum2; i++) {
+		for (int i = 0; i < 6; i++) {
 			try {
 				driver.findElement(By.id("66")).click();
 				driver.findElement(
@@ -128,9 +128,11 @@ public class KTPages {
 			}
 
 			catch (Exception e) {
-				takeSnapShot(driver, "KT " + i + " " + "Error Page");
+				//takeSnapShot(driver, "KT " + i + " " + "Error Page");
 				System.out.println("page is failing");
-				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "excelfortest.xlsx", "Output", k, 1, "Fail");
+				//System.out.println(k);
+				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "testresult.xlsx", "Output", k, 1, "Fail");
+				//System.out.println(k);
 				System.out.println(i + " number page is having Exception error");
 				takeSnapShot(driver, "KT " + i + " " + "Error Page");
 				System.out.println(st2);
