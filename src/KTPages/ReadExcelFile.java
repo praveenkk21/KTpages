@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -23,7 +24,7 @@ public class ReadExcelFile {
 
 	public static Sheet readExcel(String filePath, String fileName, String sheetName) throws IOException {
 		File file = new File(filePath + "/" + fileName);
-		System.out.println(file);
+		// System.out.println(file);
 		inputStream = new FileInputStream(file);
 		// Workbook MyWorkbook = null;
 		String fileExtensionName = fileName.substring(fileName.indexOf("."));
@@ -67,6 +68,7 @@ public class ReadExcelFile {
 			outputStream = new FileOutputStream(file);
 
 			// Workbook MyWorkbook = null;
+
 			if (MySheet.getRow(rowNum) == null) {
 				MySheet.createRow(rowNum).createCell(colNum).setCellValue(Value);
 				// inputStream.close();
@@ -84,6 +86,35 @@ public class ReadExcelFile {
 			}
 
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void deleteRowCellvalue(String filePath, String fileName, String sheetName) {
+		try {
+			Sheet MySheet = readExcel(filePath, fileName, sheetName);
+			File file = new File(filePath + "/" + fileName);
+			outputStream = new FileOutputStream(file);
+
+			int rowLen = MySheet.getLastRowNum();
+			if (rowLen > 1) {
+				for (int l = 1; l <= rowLen; l++) {
+					Row row = MyWorkbook.getSheetAt(0).getRow(l); // Access the second cell in second row to update the
+																	// value
+
+					row.removeCell(row.getCell(0));
+
+					row.removeCell(row.getCell(1));
+				}
+			}
+			MyWorkbook.write(outputStream);
+			MyWorkbook.close();
+			outputStream.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

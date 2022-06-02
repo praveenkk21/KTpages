@@ -2,9 +2,14 @@ package KTPages;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.lang.Math;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.apache.commons.io.*;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.openqa.selenium.By;
@@ -15,11 +20,25 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
+/*   --Created by Praveen on 05/30/2021
+     --To check the loading functionality of Clinical Module reports
+*/
+
 public class KTPages {
 	static WebDriver driver;
 	static String username, password, Client, intakeClient, subformname, subformfrom;
 	static String subformlibraryid, filePath;
 
+	
+	public static void main(String []args) {
+		try {
+			KTPages.browser();
+		} catch (Exception e) {
+						e.printStackTrace();
+		} 
+	   }
+	
+	
 	@Test
 
 	public static void browser() throws Exception {
@@ -27,6 +46,9 @@ public class KTPages {
 		ReadExcelFile objExcelFile = new ReadExcelFile();
 		filePath = System.getProperty("user.dir");
 		System.out.println(filePath);
+		
+		ReadExcelFile.deleteRowCellvalue(System.getProperty("user.dir"), "testresult.xlsx", "Output");
+
 		Sheet MySheet = ReadExcelFile.readExcel(filePath, "excelfortest.xlsx", "Data");
 
 		String browsername = objExcelFile.cellValueString(0, 1, MySheet);
@@ -96,16 +118,21 @@ public class KTPages {
 				driver.findElement(By.xpath("//input[@value='Display']")).click();
 				String Pagename = driver.findElement(By.id("mastePage_Title")).getText();
 				k++;
-				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "excelfortest.xlsx", "Output", k, 0, Pagename);
+				Thread.sleep(10000);
+				//driver.close();//testing purposes
+				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "testresult.xlsx", "Output", k, 0, Pagename);
 				System.out.println(Pagename + " page is working fine");
-				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "excelfortest.xlsx", "Output", k, 1, "Pass");
+				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "testresult.xlsx", "Output", k, 1, "Pass");
+				
 				takeSnapShot(driver, "KT " + i + " " + Pagename);
 			}
 
 			catch (Exception e) {
+				takeSnapShot(driver, "KT " + i + " " + "Error Page");
 				System.out.println("page is failing");
 				ReadExcelFile.writeExcel(System.getProperty("user.dir"), "excelfortest.xlsx", "Output", k, 1, "Fail");
-				System.out.println(i + " Exception error");
+				System.out.println(i + " number page is having Exception error");
+				takeSnapShot(driver, "KT " + i + " " + "Error Page");
 				System.out.println(st2);
 				driver.get(st2);
 			}
@@ -125,8 +152,12 @@ public class KTPages {
 		// Call getScreenshotAs method to create image file
 		File SrcFile = scrShot.getScreenshotAs(OutputType.FILE);
 		// Move image file to new destination
+		DateFormat dfor = new SimpleDateFormat("ddMMyyHH");
+		Date obj = new Date();
+		//System.out.println(dfor.format(obj));
+		
 		File DestFile = new File(
-				"C:\\Users\\praveenkumar\\Downloads\\MyAutomation\\selenium-server-3.141.59\\Screnshots\\" + Pagename
+				filePath+"\\Screenshots\\"+dfor.format(obj)+"\\" + Pagename
 						+ " " + Math.random() + ".jpg");
 		// Copy file at destination
 		FileUtils.copyFile(SrcFile, DestFile);

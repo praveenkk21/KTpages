@@ -12,7 +12,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class Driver {
 	public static WebDriver internet() {
-	System.setProperty("webdriver.ie.driver","C:\\Users\\praveenkumar\\Documents\\IEDriverServer_x64_3.150.1\\IEDriverServer.exe");
+	System.setProperty("webdriver.ie.driver",System.getProperty("user.dir")+"\\IEDriverServer_x64_3.150.1\\IEDriverServer.exe");
 	DesiredCapabilities des = DesiredCapabilities.internetExplorer();
 	des.setAcceptInsecureCerts(true);
 	InternetExplorerOptions c = new InternetExplorerOptions();
@@ -24,7 +24,7 @@ public class Driver {
 }
 	public static WebDriver firefox() {
 		System.setProperty("webdriver.gecko.driver",
-				"C:\\Users\\praveenkumar\\Documents\\gecko\\geckodriver.exe");
+				System.getProperty("user.dir")+"\\drivers\\gecko\\geckodriver.exe");
 		DesiredCapabilities des = DesiredCapabilities.firefox();
 		des.setAcceptInsecureCerts(true);
 		FirefoxOptions c = new FirefoxOptions();
@@ -35,7 +35,7 @@ public class Driver {
 
 	}
 	public static WebDriver chrome() {
-		System.setProperty("webdriver.chrome.driver", "C:\\Users\\praveenkumar\\Documents\\chromedriver_win32 (2)\\chromedriver3.exe");
+		System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir")+"\\drivers\\chromedriver_win32\\chromedriver.exe");
 		DesiredCapabilities des = DesiredCapabilities.chrome();
 		des.setAcceptInsecureCerts(true);
 		ChromeOptions c = new ChromeOptions();
